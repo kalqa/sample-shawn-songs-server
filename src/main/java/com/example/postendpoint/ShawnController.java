@@ -36,9 +36,15 @@ public class ShawnController {
     }
 
     @DeleteMapping(path = "/shawn/songs/{id}")
-    public ResponseEntity<String> deleteShawn(@PathVariable int id) {
+    public ResponseEntity<String> deleteShawnByPathVariable(@PathVariable int id) {
         songs.remove(id);
-        return ResponseEntity.ok("U deleted shawn song with id: " + id);
+        return ResponseEntity.ok("U deleted shawn song with path variable id: " + id);
+    }
+
+    @DeleteMapping(path = "/shawn/songs")
+    public ResponseEntity<String> deleteShawnByQueryParam(@RequestParam int id) {
+        songs.remove(id);
+        return ResponseEntity.ok("U deleted shawn song using query param with id: " + id);
     }
 
     private <T> String toStringWithIndexes(List<T> list) {
