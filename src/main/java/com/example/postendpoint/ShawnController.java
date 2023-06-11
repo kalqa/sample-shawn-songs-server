@@ -32,7 +32,7 @@ public class ShawnController {
     public ResponseEntity<ResponseBodyShawn> getAllSongs(@RequestHeader(required = false) String requestId) {
         String toStringWithIndexes = toStringWithIndexes(songs);
         System.out.println(songs);
-        return ResponseEntity.ok(new ResponseBodyShawn(toStringWithIndexes + "requestId was: " + requestId, Collections.emptyList()));
+        return ResponseEntity.ok(new ResponseBodyShawn(toStringWithIndexes, Collections.emptyList()));
     }
 
     @DeleteMapping(path = "/shawn/songs/{id}")
