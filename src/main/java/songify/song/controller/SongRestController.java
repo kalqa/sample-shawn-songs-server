@@ -9,30 +9,35 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import songify.song.dto.PartiallyUpdateSongRequestDto;
 import songify.song.dto.SingleSongResponseDto;
 import songify.song.dto.SongRequestDto;
 import songify.song.dto.SongResponseDto;
+import songify.song.dto.UpdateSongRequestDto;
 
 @RestController
 @Log4j2
 @RequestMapping("/songs")
 public class SongRestController {
 
-    Map<Integer, String> database = new HashMap<>();
+    Map<Integer, String> database = new HashMap<>(Map.of(
+            1, "shawnmendes song1",
+            2, "ariana grande song2",
+            3, "ariana grande song21123123",
+            4, "ariana grande song12312314345cbvbcvb"
+    ));
 
     @GetMapping
     public ResponseEntity<SongResponseDto> getAllSongs(@RequestParam(required = false) Integer limit) {
-        database.put(1, "shawnmendes song1");
-        database.put(2, "ariana grande song2");
-        database.put(3, "ariana grande song21123123");
-        database.put(4, "ariana grande song12312314345cbvbcvb");
         if (limit != null) {
             Map<Integer, String> limitedMap = database.entrySet()
                     .stream()
@@ -72,7 +77,27 @@ public class SongRestController {
 
     @DeleteMapping
     public ResponseEntity<String> deleteSongByIdUsingRequestParam(@RequestParam Integer id) {
+        // exists? no then handle exception
         database.remove(id);
         return ResponseEntity.ok("U deleted song using query param with id: " + id);
+    }
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<SingleSongResponseDto> update(@PathVariable Integer id,
+                                                        @RequestBody @Valid UpdateSongRequestDto songRequest) {
+        String songName = songRequest.songName();
+        database.put(id, songName);
+        return ResponseEntity.ok(new SingleSongResponseDto(songName));
+    }
+
+    @PatchMapping(path = "/{id}")
+    public ResponseEntity<SingleSongResponseDto> partiallyUpdate(@PathVariable Integer id,
+                                                                 @RequestBody @Valid PartiallyUpdateSongRequestDto songRequest) {
+
+        // todo obiekt SongEntity
+        String song = database.get(id);
+        String newSongName = songRequest.songName();
+        database.put(id, newSongName);
+        return ResponseEntity.ok(new SingleSongResponseDto(newSongName));
     }
 }
