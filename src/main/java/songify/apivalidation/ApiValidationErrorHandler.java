@@ -1,5 +1,6 @@
 package songify.apivalidation;
 
+import com.songify.song.controller.SongRestController;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -10,15 +11,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ControllerAdvice
+@ControllerAdvice(assignableTypes = SongRestController.class)
 public class ApiValidationErrorHandler {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public ApiValidationErrorDto handleValidationExceptions(MethodArgumentNotValidException exception) {
-        final List<String> errors = getErrorsFromException(exception);
-        return new ApiValidationErrorDto(errors, HttpStatus.BAD_REQUEST);
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiValidationErrorResponseDto handleValidationException(MethodArgumentNotValidException exception) {
+        List<String> messages = getErrorsFromException(exception);
+        return new ApiValidationErrorResponseDto(messages, HttpStatus.BAD_REQUEST);
     }
 
     private List<String> getErrorsFromException(MethodArgumentNotValidException exception) {
